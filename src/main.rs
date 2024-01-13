@@ -1,4 +1,5 @@
 mod database;
+mod utils;
 use actix_cors::Cors;
 use actix_web::middleware::Logger;
 use actix_web::{
