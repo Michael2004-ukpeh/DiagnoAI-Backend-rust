@@ -6,7 +6,7 @@ use actix_web::{
     web::{get, Data},
     App, HttpResponse, HttpServer,
 };
-use env_logger::Env;
+
 use serde_json::json;
 
 pub async fn health_check() -> HttpResponse {
