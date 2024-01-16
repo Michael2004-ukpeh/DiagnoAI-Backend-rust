@@ -1,8 +1,11 @@
 use async_trait::async_trait;
-use dotenv;
+use dotenv::dotenv;
 use lettre::transport::smtp::authentication::Credentials;
 use lettre::message::header::ContentType;
-use lettre::{Message ,SmtpTransport, Transport,AsyncSmtpTransport, Tokio1Executor};
+use lettre::Message;
+use lettre::{AsyncSmtpTransport, Tokio1Executor};
+use lettre::AsyncTransport;
+
 
 struct Email{
  pub to: String, 
@@ -30,13 +33,11 @@ impl SendEmailTrait for Email{
          let creds = Credentials::new(email_username.to_string(), email_pass.to_string());
 
          // Open a remote connection to gmail 
-        let mailer = AsyncSmtpTransport::<Tokio1Executor>::relay("smtp.gmail.com").unwrap().credentials(cred).build();
-       let return_statement = mailer.send(&email).await.unwrap_or_else(|err|{
-        return Err(err)
-       });
-       if return_statement{
-        println!("Email sent");;
-       }
+        let mailer = AsyncSmtpTransport::<Tokio1Executor>::relay("smtp.gmail.com").unwrap().credentials(creds).build();
+        match mailer.send(email).await {
+            Ok(_) => println!("Email successfully sent"),
+            Err(err) => eprintln!("Failed to deliver email: {}", err),
+        }
       Ok(())
     }
 }
