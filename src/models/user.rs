@@ -1,34 +1,40 @@
-use serde::{Deserialize, Serialize};
 use mongodb::bson::oid::ObjectId;
 use mongodb::bson::DateTime;
-use validator::{Validate};
+use serde::{Deserialize, Serialize};
+use validator::Validate;
 
-#[derive(Serialize, Deserialize, Debug, Validate)]
-pub struct User{
-  #[serde(rename = "_id", skip_serializing_if = "Option::is_none")]
-  id: Option<ObjectId>,
-  full_name: String,
-  #[validate(email)]
-  email: String,
-  gender: Gender,
-  year_of_birth:DateTime,
-  #[validate(length(min = 8, message = "Password must be eight(8) characters long"))]
-  password: String, 
-  password_changed_at:DateTime,
-  password_reset_token_expires_at:Option<DateTime>,
-  password_reset_token:Option<String>,
-  active: Option<bool>,
-  status:Option<bool>,
-  is_verified: Option<bool>, 
-  otp: Option<u32>,
-  otp_expiration: Option<DateTime>
-  
+use crate::dto::SignUpDTO;
 
+#[derive(Serialize, Deserialize, Debug, Validate, Clone)]
+pub struct User {
+    #[serde(rename = "_id", skip_serializing_if = "Option::is_none")]
+    pub id: Option<ObjectId>,
+    pub full_name: String,
+    #[validate(email(message = "Email must be a valid email type"))]
+    pub email: String,
+    pub gender: Gender,
+    pub year_of_birth: DateTime,
+    #[validate(length(min = 8, message = "Password must be eight(8) characters long"))]
+    pub password: String,
+    pub password_changed_at: Option<DateTime>,
+    pub password_reset_token_expires_at: Option<DateTime>,
+    pub password_reset_token: Option<String>,
+    pub active: Option<bool>,
+
+    pub is_verified: bool,
+    pub otp: Option<u32>,
+    pub otp_expiration: Option<DateTime>,
 }
 
-
+// impl From<SignUpDTO> for User {
+//   fn from(source: SignUpDTO) -> Self{
+//     User{
+//       id:
+//     }
+//   }
+// }
 #[derive(Copy, Clone, Eq, PartialEq, Serialize, Deserialize, Debug)]
-pub enum Gender{
-  Male, 
-  Female
+pub enum Gender {
+    Male,
+    Female,
 }
